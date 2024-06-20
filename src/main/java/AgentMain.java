@@ -57,32 +57,25 @@ public class AgentMain {
     }
 
     private static Path getDumpFolder() {
-        String dumpEnabledConfig = System.getProperty("smith.dump");
-        if (dumpEnabledConfig == null || !Boolean.getBoolean(dumpEnabledConfig)) {
-            return null;
-        }
         String dumpPathConfig = System.getProperty("smith.dump_path");
         if (dumpPathConfig == null) {
-            Path tmp = Paths.get(System.getProperty("java.io.tmpdir"));
-            try {
-                return Files.createTempDirectory(tmp, "agent-smith-");
-            } catch (IOException e) {
-                throw new IllegalStateException("unable to create temp folder");
-            }
+            return null;
         }
-        Path dumpPath = Paths.get(dumpPathConfig);
 
-        // recursively delete
-        try {
-            Files.walk(dumpPath).sorted(Comparator.reverseOrder()).forEach(path -> {
-                try {
-                    Files.delete(path);
-                } catch (IOException e) {
-                    // silently ignored
-                }
-            });
-        } catch (IOException e) {
-            throw new IllegalStateException("unable to delete temp folder");
+        Path dumpPath = Paths.get(dumpPathConfig);
+        if (Files.exists(dumpPath)) {
+            // recursively delete
+            try {
+                Files.walk(dumpPath).sorted(Comparator.reverseOrder()).forEach(path -> {
+                    try {
+                        Files.delete(path);
+                    } catch (IOException e) {
+                        // silently ignored
+                    }
+                });
+            } catch (IOException e) {
+                throw new IllegalStateException("unable to delete temp folder");
+            }
         }
         return dumpPath;
     }
