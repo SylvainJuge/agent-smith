@@ -12,7 +12,9 @@ public class AgentMain {
     public static void premain(String args, Instrumentation inst) {
 
         final Path dumpFolder = getDumpFolder();
-        System.out.println("dump bytecode in " + dumpFolder);
+        if (dumpFolder != null) {
+            System.out.println("dump bytecode in " + dumpFolder);
+        }
 
         inst.addTransformer(new ClassFileTransformer() {
             @Override
@@ -22,8 +24,10 @@ public class AgentMain {
                                     ProtectionDomain protectionDomain,
                                     byte[] classfileBuffer) {
 
-                // writes class bytecode in .class file
-                dumpClass(dumpFolder, cl, className, classfileBuffer);
+                if (dumpFolder != null) {
+                    // writes class bytecode in .class file
+                    dumpClass(dumpFolder, cl, className, classfileBuffer);
+                }
 
                 return null; // do not modify any class for now
             }
@@ -53,11 +57,15 @@ public class AgentMain {
     }
 
     private static Path getDumpFolder() {
+        String dumpEnabledConfig = System.getProperty("smith.dump");
+        if (dumpEnabledConfig == null || !Boolean.getBoolean(dumpEnabledConfig)) {
+            return null;
+        }
         String dumpPathConfig = System.getProperty("smith.dump_path");
         if (dumpPathConfig == null) {
             Path tmp = Paths.get(System.getProperty("java.io.tmpdir"));
             try {
-                return Files.createTempDirectory(tmp, "agent-smith");
+                return Files.createTempDirectory(tmp, "agent-smith-");
             } catch (IOException e) {
                 throw new IllegalStateException("unable to create temp folder");
             }
