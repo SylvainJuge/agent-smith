@@ -1,7 +1,5 @@
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,19 +9,22 @@ import java.util.Comparator;
 
 public class AgentMain {
 
-    private static Instrumentation instrumentation;
-
     public static void premain(String args, Instrumentation inst) {
-        instrumentation = inst;
 
         final Path dumpFolder = getDumpFolder();
-
         System.out.println("dump bytecode in " + dumpFolder);
 
         inst.addTransformer(new ClassFileTransformer() {
             @Override
-            public byte[] transform(ClassLoader cl, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            public byte[] transform(ClassLoader cl,
+                                    String className,
+                                    Class<?> classBeingRedefined,
+                                    ProtectionDomain protectionDomain,
+                                    byte[] classfileBuffer) {
+
+                // writes class bytecode in .class file
                 dumpClass(dumpFolder, cl, className, classfileBuffer);
+
                 return null; // do not modify any class for now
             }
         });
@@ -45,7 +46,7 @@ public class AgentMain {
         }
     }
 
-    private static String normalizePath(String s){
+    private static String normalizePath(String s) {
         return s.replaceAll("/", "_")
                 .replaceAll("\\$", "_")
                 .replaceAll("@", "_");
