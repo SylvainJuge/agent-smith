@@ -28,16 +28,16 @@ Within the `agent-smith` folder:
 
 ```shell
 # download game (only needed once)
-./examples/shattered-pixel-dungeon/linux/download.sh
+./examples/shattered-pixel-dungeon/download.sh
 
 # run game normally
-./examples/shattered-pixel-dungeon/linux/run.sh 0
+./examples/shattered-pixel-dungeon/run.sh 0
 
 # run game and dump game bytecode
-./examples/shattered-pixel-dungeon/linux/run.sh 1
+./examples/shattered-pixel-dungeon/run.sh 1
 
 # run game with cheat enabled
-./examples/shattered-pixel-dungeon/linux/run.sh 2
+./examples/shattered-pixel-dungeon/run.sh 2
 ```
 
 
