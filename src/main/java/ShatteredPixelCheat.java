@@ -4,7 +4,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
-public class ShatteredPixelCheatASM {
+public class ShatteredPixelCheat {
 
     private static final int ASM_VERSION = Opcodes.ASM9;
     private static final int PARSING_OPTIONS = 0;
@@ -23,7 +23,7 @@ public class ShatteredPixelCheatASM {
                 if ("com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero".equals(className)) {
                     ClassReader cr = new ClassReader(classfileBuffer);
                     ClassWriter cw = new ClassWriter(cr, PARSING_FLAGS);
-                    cr.accept(new CheatClassVisitor(cw), PARSING_OPTIONS);
+                    cr.accept(new HeroClassVisitor(cw), PARSING_OPTIONS);
                     return cw.toByteArray();
                 } else {
                     return null;
@@ -32,22 +32,22 @@ public class ShatteredPixelCheatASM {
         });
     }
 
-    private static class CheatClassVisitor extends ClassVisitor {
+    private static class HeroClassVisitor extends ClassVisitor {
 
-        protected CheatClassVisitor(ClassVisitor cv) {
+        protected HeroClassVisitor(ClassVisitor cv) {
             super(ASM_VERSION, cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
-            return ("damage".equals(name)) ? new CheatMethodVisitor(mv) : mv;
+            return ("damage".equals(name)) ? new DamageMethodVisitor(mv) : mv;
         }
     }
 
-    private static class CheatMethodVisitor extends MethodVisitor {
+    private static class DamageMethodVisitor extends MethodVisitor {
 
-        protected CheatMethodVisitor(MethodVisitor mv) {
+        protected DamageMethodVisitor(MethodVisitor mv) {
             super(ASM_VERSION, mv);
         }
 

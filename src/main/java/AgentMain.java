@@ -4,6 +4,6 @@ public class AgentMain {
 
     public static void premain(String args, Instrumentation inst) {
         AgentDump.register(inst);
-        ShatteredPixelCheatASM.register(inst);
+        ShatteredPixelCheat.register(inst);
     }
 }
