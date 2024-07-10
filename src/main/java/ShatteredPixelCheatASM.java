@@ -15,7 +15,7 @@ public class ShatteredPixelCheatASM {
         inst.addTransformer(new ClassFileTransformer() {
             @Override
             public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
-                if("com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero".equals(className)){
+                if ("com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero".equals(className)) {
                     ClassReader cr = new ClassReader(classfileBuffer);
                     ClassWriter cw = new ClassWriter(cr, PARSING_FLAGS);
                     cr.accept(new CheatClassVisitor(cw), PARSING_OPTIONS);
@@ -50,9 +50,9 @@ public class ShatteredPixelCheatASM {
         public void visitCode() {
             mv.visitCode();
 
-            // set damage to zero
-            mv.visitLdcInsn(0);
-            mv.visitVarInsn(Opcodes.ISTORE, 1);
+            // set damage parameter to zero
+            mv.visitLdcInsn(0); // iconst_0
+            mv.visitVarInsn(Opcodes.ISTORE, 1); // istore_1
         }
     }
 
