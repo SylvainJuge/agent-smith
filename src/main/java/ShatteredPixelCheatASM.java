@@ -12,6 +12,11 @@ public class ShatteredPixelCheatASM {
 
     public static void register(Instrumentation inst) {
 
+        String cheatOption = System.getProperty("smith.cheat");
+        if (!Boolean.parseBoolean(cheatOption)) {
+            return;
+        }
+
         inst.addTransformer(new ClassFileTransformer() {
             @Override
             public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {

@@ -11,9 +11,11 @@ public class AgentDump {
 
     public static void register(Instrumentation inst) {
         final Path dumpFolder = getDumpFolder();
-        if (dumpFolder != null) {
-            System.err.println("dump bytecode in " + dumpFolder);
+        if (dumpFolder == null) {
+            return;
         }
+
+        System.err.println("dump bytecode in " + dumpFolder);
 
         inst.addTransformer(new ClassFileTransformer() {
             @Override
@@ -23,10 +25,8 @@ public class AgentDump {
                                     ProtectionDomain protectionDomain,
                                     byte[] classfileBuffer) {
 
-                if (dumpFolder != null) {
-                    // writes class bytecode in .class file
-                    dumpClass(dumpFolder, cl, className, classfileBuffer);
-                }
+                // writes class bytecode in .class file
+                dumpClass(dumpFolder, cl, className, classfileBuffer);
 
                 return null; // do not modify any class
             }

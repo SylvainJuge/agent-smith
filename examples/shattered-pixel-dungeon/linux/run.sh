@@ -17,6 +17,13 @@ case ${scenario} in
       -Dsmith.dump_path=${folder}/class_dump \
       -jar ${folder}/shattered-pixel-dungeon.jar
     ;;
+  2)
+    echo "run game with cheat"
+    java \
+      -javaagent:${folder}/../../../target/smith-agent-1.0-SNAPSHOT.jar \
+      -Dsmith.cheat=true \
+      -jar ${folder}/shattered-pixel-dungeon.jar
+    ;;
   *)
     echo "unknown scenario: ${scenario}"
     ;;
