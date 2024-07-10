@@ -2,3 +2,4 @@
 .idea
 /examples/**/*.jar
 /examples/**/class_dump
+dependency-reduced-pom.xml

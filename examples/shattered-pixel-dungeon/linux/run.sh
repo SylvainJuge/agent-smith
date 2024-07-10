@@ -11,7 +11,7 @@ case ${scenario} in
       -jar ${folder}/shattered-pixel-dungeon.jar
     ;;
   1)
-    echo "run game and dump classes"
+    echo "run game and dump classes in ${folder}/class_dump"
     java \
       -javaagent:${folder}/../../../target/smith-agent-1.0-SNAPSHOT.jar \
       -Dsmith.dump_path=${folder}/class_dump \
