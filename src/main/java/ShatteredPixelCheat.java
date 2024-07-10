@@ -20,10 +20,13 @@ public class ShatteredPixelCheat {
         inst.addTransformer(new ClassFileTransformer() {
             @Override
             public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
-                if ("com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero".equals(className)) {
+
+                boolean isHero = "com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero".equals(className);
+                boolean isChar = "com/shatteredpixel/shatteredpixeldungeon/actors/Char".equals(className);
+                if (isHero || isChar) {
                     ClassReader cr = new ClassReader(classfileBuffer);
                     ClassWriter cw = new ClassWriter(cr, PARSING_FLAGS);
-                    cr.accept(new HeroClassVisitor(cw), PARSING_OPTIONS);
+                    cr.accept(new CheatClassVisitor(cw, isHero), PARSING_OPTIONS);
                     return cw.toByteArray();
                 } else {
                     return null;
@@ -32,32 +35,48 @@ public class ShatteredPixelCheat {
         });
     }
 
-    private static class HeroClassVisitor extends ClassVisitor {
+    private static class CheatClassVisitor extends ClassVisitor {
 
-        protected HeroClassVisitor(ClassVisitor cv) {
+        private final boolean isHero;
+
+        protected CheatClassVisitor(ClassVisitor cv, boolean isHero) {
             super(ASM_VERSION, cv);
+            this.isHero = isHero;
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
-            return ("damage".equals(name)) ? new DamageMethodVisitor(mv) : mv;
+            return ("damage".equals(name)) ? new DamageMethodVisitor(mv, isHero) : mv;
         }
     }
 
     private static class DamageMethodVisitor extends MethodVisitor {
 
-        protected DamageMethodVisitor(MethodVisitor mv) {
+        private final boolean isHero;
+
+        protected DamageMethodVisitor(MethodVisitor mv, boolean isHero) {
             super(ASM_VERSION, mv);
+            this.isHero = isHero;
         }
 
         @Override
         public void visitCode() {
             mv.visitCode();
 
-            // set damage parameter to zero
-            mv.visitLdcInsn(0); // iconst_0
-            mv.visitVarInsn(Opcodes.ISTORE, 1); // istore_1
+            if (isHero) {
+                // set damage parameter to zero
+                mv.visitLdcInsn(0); // iconst_0
+                mv.visitVarInsn(Opcodes.ISTORE, 1); // istore_1
+            } else {
+                // amplify damage parameter by factor of 42
+                mv.visitLdcInsn(42);
+                mv.visitVarInsn(Opcodes.ILOAD, 1);
+                mv.visitInsn(Opcodes.IMUL);
+                mv.visitVarInsn(Opcodes.ISTORE, 1);
+            }
+
+
         }
     }
 
