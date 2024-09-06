@@ -7,8 +7,6 @@ import java.security.ProtectionDomain;
 public class ShatteredPixelCheat {
 
     private static final int ASM_VERSION = Opcodes.ASM9;
-    private static final int PARSING_OPTIONS = 0;
-    private static final int PARSING_FLAGS = 0;
 
     public static void register(Instrumentation inst) {
 
@@ -19,14 +17,18 @@ public class ShatteredPixelCheat {
 
         inst.addTransformer(new ClassFileTransformer() {
             @Override
-            public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
+            public byte[] transform(ClassLoader loader,
+                                    String className,
+                                    Class<?> classBeingRedefined,
+                                    ProtectionDomain protectionDomain,
+                                    byte[] classfileBuffer) {
 
                 boolean isHero = "com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero".equals(className);
                 boolean isChar = "com/shatteredpixel/shatteredpixeldungeon/actors/Char".equals(className);
                 if (isHero || isChar) {
                     ClassReader cr = new ClassReader(classfileBuffer);
-                    ClassWriter cw = new ClassWriter(cr, PARSING_FLAGS);
-                    cr.accept(new CheatClassVisitor(cw, isHero), PARSING_OPTIONS);
+                    ClassWriter cw = new ClassWriter(cr, 0);
+                    cr.accept(new CheatClassVisitor(cw, isHero), 0);
                     return cw.toByteArray();
                 } else {
                     return null;
@@ -52,7 +54,6 @@ public class ShatteredPixelCheat {
     }
 
     private static class DamageMethodVisitor extends MethodVisitor {
-
         private final boolean isHero;
 
         protected DamageMethodVisitor(MethodVisitor mv, boolean isHero) {
