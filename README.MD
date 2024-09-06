@@ -7,7 +7,7 @@ Java agent to learn and have fun with Java bytecode modification.
 ```shell
 git clone git@github.com:SylvainJuge/agent-smith.git
 cd agent-smith
-mvn clean package
+./mvnw clean package
 ```
 
 The agent jar in `target/smith-agent-1.0-SNAPSHOT.jar` should be used with the `-javaagent:` JVM argument.
